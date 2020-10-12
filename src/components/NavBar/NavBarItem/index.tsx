@@ -8,7 +8,7 @@ export interface INavBarItemProps {
     name: string
     href: string
     active: boolean
-    onClick(clickedItem: any): void
+    onClick(clickedItem: INavBarItemProps): void
   }
 }
 
@@ -18,7 +18,7 @@ const NavBarItem: React.FC<INavBarItemProps> = ({ item }) => {
       <Link
         className={`nav-item nav-link ${item.active ? 'active' : ''}`}
         to={item.href}
-        onClick={() => item.onClick(item)}
+        onClick={() => item.onClick({ item })}
       >
         {item.name}
       </Link>
