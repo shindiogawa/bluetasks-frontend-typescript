@@ -2,12 +2,7 @@ import { useState, useEffect } from 'react'
 import { INavBarItemProps } from '../components/NavBar/NavBarItem'
 
 export const useNavBarItems = (): {
-  items: {
-    name: string
-    href: string
-    active: boolean
-    onClick(clickedItem: INavBarItemProps): void
-  }[]
+  items: INavBarItemProps['item'][]
   helloMessage: string
 } => {
   const [items, setItems] = useState<INavBarItemProps['item'][]>([
@@ -27,8 +22,6 @@ export const useNavBarItems = (): {
           )
         )
       }
-
-      setHelloMessage('helloooo bitch')
     }
 
     const items: INavBarItemProps['item'][] = [
