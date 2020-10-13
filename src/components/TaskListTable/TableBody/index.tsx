@@ -1,13 +1,14 @@
-import React from 'react'
+import React, { useCallback, useEffect, useMemo } from 'react'
 
 import { Container } from './styles'
 
-interface ITableBodyProps {
+export interface ITableBodyProps {
   tasks: {
     id: number
     description: string
     whenToDo: string
     done: boolean
+    remove(id: number): void
   }[]
 }
 
@@ -24,7 +25,12 @@ const TableBody: React.FC<ITableBodyProps> = ({ tasks }) => {
           <td>
             <input type="button" className="btn btn-primary" value="Editar" />
             &nbsp;
-            <input type="button" className="btn btn-danger" value="Excluir" />
+            <input
+              type="button"
+              className="btn btn-danger"
+              value="Excluir"
+              onClick={() => item.remove(item.id)}
+            />
           </td>
         </tr>
       ))}

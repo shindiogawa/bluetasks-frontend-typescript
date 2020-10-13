@@ -1,15 +1,16 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 
 import { Container } from './styles'
-import TableBody from './TableBody'
+import TableBody, { ITableBodyProps } from './TableBody'
 import TableHeader from './TableHeader'
-import TaskService from '../../api/TaskService'
+import { useTableBody } from '../../hooks/useTableBody'
 const TaskListTable: React.FC = () => {
+  const tasks = useTableBody()
   return (
     <Container>
       <table className="table table-striped">
         <TableHeader />
-        <TableBody tasks={TaskService} />
+        <TableBody tasks={tasks} />
       </table>
     </Container>
   )
