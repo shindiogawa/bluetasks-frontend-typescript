@@ -3,81 +3,13 @@ import React, { useEffect, useState } from 'react'
 import { Container } from './styles'
 import TableBody, { ITableBodyProps } from './TableBody'
 import TableHeader from './TableHeader'
-import { useTableBody } from '../../hooks/useTableBody'
-import { toast, ToastContainer } from 'react-toastify'
+
+import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import EmptyTableBody from './EmptyTableBody'
-const TaskListTable: React.FC = () => {
-  // const tasks = useTableBody()
-  const removeTask = (id: number): void => {
-    if (window.confirm('Deseja mesmo remover essa tarefa?')) {
-      const tasks2: ITableBodyProps['tasks'] = tasks.filter(
-        task => id !== task.id
-      )
-      setTasks(tasks2)
-      toast.success('Tarefa excluída!', {
-        position: toast.POSITION.BOTTOM_LEFT
-      })
-    }
-  }
-
-  const updateTaskStatus = (task: {
-    id: number
-    description: string
-    whenToDo: string
-    done: boolean
-  }) => {
-    task.done = !task.done
-    saveTask(task)
-  }
-
-  const saveTask = (task: {
-    id: number
-    description: string
-    whenToDo: string
-    done: boolean
-  }): void => {
-    setTasks(
-      tasks.map(t =>
-        task.id !== t.id
-          ? t
-          : {
-              id: task.id,
-              description: task.description,
-              whenToDo: task.whenToDo,
-              done: task.done
-            }
-      )
-    )
-  }
-
-  const [tasks, setTasks] = useState<ITableBodyProps['tasks']>([
-    {
-      id: 1,
-      description: 'Tarefa 1',
-      whenToDo: '01/01/2030',
-      done: false
-    },
-    {
-      id: 2,
-      description: 'Tarefa 2',
-      whenToDo: '02/01/2030',
-      done: false
-    },
-    {
-      id: 3,
-      description: 'Tarefa 3',
-      whenToDo: '03/01/2030',
-      done: false
-    },
-    {
-      id: 4,
-      description: 'Tarefa 4',
-      whenToDo: '04/01/2030',
-      done: true
-    }
-  ])
-
+import { useList } from '../../hooks/list'
+const TaskListTable: React.FC<ITableBodyProps> = () => {
+  const { tasks, removeTask, updateTaskStatus, saveTask } = useList()
   return (
     <Container>
       <table className="table table-striped">
@@ -87,6 +19,7 @@ const TaskListTable: React.FC = () => {
             tasks={tasks}
             remove={removeTask}
             updateStatus={updateTaskStatus}
+            saveTask={saveTask}
           />
         ) : (
           <EmptyTableBody />

@@ -3,6 +3,7 @@ import { BrowserRouter, Route, Switch } from 'react-router-dom'
 import NavBar from './components/NavBar'
 import TaskForm from './components/TaskForm'
 import TaskListTable from './components/TaskListTable'
+import { TableListProvider } from './hooks/list'
 
 // import { Container } from './styles';
 
@@ -12,10 +13,12 @@ const App: React.FC = () => {
       <div className="App">
         <NavBar />
         <div className="container" style={{ marginTop: 20 }}>
-          <Switch>
-            <Route path="/" exact component={TaskListTable} />
-            <Route path="/form" component={TaskForm} />
-          </Switch>
+          <TableListProvider>
+            <Switch>
+              <Route path="/" exact component={TaskListTable} />
+              <Route path="/form" component={TaskForm} />
+            </Switch>
+          </TableListProvider>
         </div>
       </div>
     </BrowserRouter>

@@ -8,10 +8,15 @@ export interface ITableBodyProps {
     description: string
     whenToDo: string
     done: boolean
-    // remove(id: number): void
   }[]
   remove(id: number): void
   updateStatus(task: {
+    id: number
+    description: string
+    whenToDo: string
+    done: boolean
+  }): void
+  saveTask(task: {
     id: number
     description: string
     whenToDo: string

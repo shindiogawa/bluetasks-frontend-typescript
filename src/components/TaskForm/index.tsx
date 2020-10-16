@@ -1,8 +1,12 @@
 import React, { useState } from 'react'
+import { useList } from '../../hooks/list'
+import { useTableBody } from '../../hooks/useTableBody'
+import TaskListTable from '../TaskListTable'
 
 import { Container } from './styles'
 
 const TaskForm: React.FC = () => {
+  const { saveTask } = useList()
   const [formTask, setFormTask] = useState({
     id: 0,
     description: '',
@@ -11,6 +15,8 @@ const TaskForm: React.FC = () => {
   })
   const onSubmitHandler = (event: React.FormEvent<HTMLFormElement>): void => {
     event.preventDefault()
+
+    saveTask(formTask)
   }
 
   const onInputChangeHandler = (
