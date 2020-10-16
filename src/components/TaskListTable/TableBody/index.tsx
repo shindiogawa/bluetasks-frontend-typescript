@@ -36,8 +36,9 @@ const TableBody: React.FC<ITableBodyProps> = ({
               onChange={() => updateStatus(item)}
             />
           </td>
-          <td>{item.description}</td>
-          <td>{item.whenToDo}</td>
+
+          <td>{item.done ? <s>{item.description}</s> : item.description}</td>
+          <td>{item.done ? <s>{item.whenToDo}</s> : item.whenToDo}</td>
           <td>
             <input type="button" className="btn btn-primary" value="Editar" />
             &nbsp;
