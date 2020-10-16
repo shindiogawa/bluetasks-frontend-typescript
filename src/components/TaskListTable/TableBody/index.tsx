@@ -39,7 +39,6 @@ const TableBody: React.FC<ITableBodyProps> = ({ tasks, remove }) => {
               value="Excluir"
               onClick={() => remove(item.id)}
             />
-            <span>id = {item.id}</span>
           </td>
         </tr>
       ))}

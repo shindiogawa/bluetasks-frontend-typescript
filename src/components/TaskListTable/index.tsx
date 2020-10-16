@@ -4,14 +4,21 @@ import { Container } from './styles'
 import TableBody, { ITableBodyProps } from './TableBody'
 import TableHeader from './TableHeader'
 import { useTableBody } from '../../hooks/useTableBody'
+import { toast, ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
+import EmptyTableBody from './EmptyTableBody'
 const TaskListTable: React.FC = () => {
   // const tasks = useTableBody()
   const removeTask = (id: number): void => {
-    const tasks2: ITableBodyProps['tasks'] = tasks.filter(
-      task => id !== task.id
-    )
-    console.log(tasks2)
-    setTasks(tasks2)
+    if (window.confirm('Deseja mesmo remover essa tarefa?')) {
+      const tasks2: ITableBodyProps['tasks'] = tasks.filter(
+        task => id !== task.id
+      )
+      setTasks(tasks2)
+      toast.success('Tarefa excluída!', {
+        position: toast.POSITION.BOTTOM_LEFT
+      })
+    }
   }
 
   const [tasks, setTasks] = useState<ITableBodyProps['tasks']>([
@@ -45,8 +52,13 @@ const TaskListTable: React.FC = () => {
     <Container>
       <table className="table table-striped">
         <TableHeader />
-        <TableBody tasks={tasks} remove={removeTask} />
+        {tasks.length > 0 ? (
+          <TableBody tasks={tasks} remove={removeTask} />
+        ) : (
+          <EmptyTableBody />
+        )}
       </table>
+      <ToastContainer autoClose={1500} />
     </Container>
   )
 }
