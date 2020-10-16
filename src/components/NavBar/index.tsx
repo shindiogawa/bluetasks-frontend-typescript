@@ -23,6 +23,7 @@ const NavBar: React.FC = () => {
         >
           <span className="navbar-toggler-icon"></span>
         </button>
+
         <div className="collapse navbar-collapse" id="navbarText">
           <div className="navbar-nav mr-auto">
             {navBarItems.items.map(item => (
