@@ -21,6 +21,36 @@ const TaskListTable: React.FC = () => {
     }
   }
 
+  const updateTaskStatus = (task: {
+    id: number
+    description: string
+    whenToDo: string
+    done: boolean
+  }) => {
+    task.done = !task.done
+    saveTask(task)
+  }
+
+  const saveTask = (task: {
+    id: number
+    description: string
+    whenToDo: string
+    done: boolean
+  }): void => {
+    setTasks(
+      tasks.map(t =>
+        task.id !== t.id
+          ? t
+          : {
+              id: task.id,
+              description: task.description,
+              whenToDo: task.whenToDo,
+              done: task.done
+            }
+      )
+    )
+  }
+
   const [tasks, setTasks] = useState<ITableBodyProps['tasks']>([
     {
       id: 1,
@@ -53,7 +83,11 @@ const TaskListTable: React.FC = () => {
       <table className="table table-striped">
         <TableHeader />
         {tasks.length > 0 ? (
-          <TableBody tasks={tasks} remove={removeTask} />
+          <TableBody
+            tasks={tasks}
+            remove={removeTask}
+            updateStatus={updateTaskStatus}
+          />
         ) : (
           <EmptyTableBody />
         )}

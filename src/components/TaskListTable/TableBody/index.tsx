@@ -11,9 +11,19 @@ export interface ITableBodyProps {
     // remove(id: number): void
   }[]
   remove(id: number): void
+  updateStatus(task: {
+    id: number
+    description: string
+    whenToDo: string
+    done: boolean
+  }): void
 }
 
-const TableBody: React.FC<ITableBodyProps> = ({ tasks, remove }) => {
+const TableBody: React.FC<ITableBodyProps> = ({
+  tasks,
+  remove,
+  updateStatus
+}) => {
   console.log(tasks)
   return (
     <Container>
@@ -23,13 +33,12 @@ const TableBody: React.FC<ITableBodyProps> = ({ tasks, remove }) => {
             <input
               type="checkbox"
               checked={item.done}
-              onChange={() => {
-                console.log('test')
-              }}
+              onChange={() => updateStatus(item)}
             />
           </td>
-          <td>{item.description}</td>
-          <td>{item.whenToDo}</td>
+
+          <td>{item.done ? <s>{item.description}</s> : item.description}</td>
+          <td>{item.done ? <s>{item.whenToDo}</s> : item.whenToDo}</td>
           <td>
             <input type="button" className="btn btn-primary" value="Editar" />
             &nbsp;
