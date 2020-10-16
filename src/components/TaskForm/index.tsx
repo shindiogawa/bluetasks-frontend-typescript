@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { Redirect } from 'react-router-dom'
 import { useList } from '../../hooks/list'
 import { useTableBody } from '../../hooks/useTableBody'
 import TaskListTable from '../TaskListTable'
@@ -13,10 +14,12 @@ const TaskForm: React.FC = () => {
     whenToDo: '',
     done: false
   })
+  const [redirect, setRedirect] = useState(false)
   const onSubmitHandler = (event: React.FormEvent<HTMLFormElement>): void => {
     event.preventDefault()
 
     saveTask(formTask)
+    setRedirect(true)
   }
 
   const onInputChangeHandler = (
@@ -28,7 +31,9 @@ const TaskForm: React.FC = () => {
     setFormTask({ ...formTask, [field]: value })
     console.log(formTask)
   }
-
+  if (redirect) {
+    return <Redirect to="/" />
+  }
   return (
     <Container>
       <h1>Cadastro da Tarefa</h1>
