@@ -1,27 +1,11 @@
-import React, { createContext, useState, useContext } from 'react'
+import React, { createContext, useState, useContext, ReactElement } from 'react'
 import { ITableBodyProps } from '../components/TaskListTable/TableBody'
 
 import { toast } from 'react-toastify'
-interface ITheme {
-  title: string
-
-  colors: {
-    primary: string
-    secondary: string
-    tertiary: string
-
-    white: string
-    black: string
-    gray: string
-
-    success: string
-    info: string
-    warning: string
-  }
-}
 
 interface IListTableContext {
   tasks: ITableBodyProps['tasks']
+  editId: number
   removeTask(id: number): void
   updateTaskStatus(task: {
     id: number
@@ -35,6 +19,8 @@ interface IListTableContext {
     whenToDo: string
     done: boolean
   }): void
+  editTask(id: number): void
+  loadTask(id: number): ITableBodyProps['tasks'][0]
 }
 
 const ListTableContext = createContext<IListTableContext>(
@@ -46,28 +32,30 @@ const TableListProvider: React.FC = ({ children }) => {
     {
       id: 1,
       description: 'Tarefa 1',
-      whenToDo: '01/01/2030',
+      whenToDo: '2030-01-01',
       done: false
     },
     {
       id: 2,
       description: 'Tarefa 2',
-      whenToDo: '02/01/2030',
+      whenToDo: '2030-01-02',
       done: false
     },
     {
       id: 3,
       description: 'Tarefa 3',
-      whenToDo: '03/01/2030',
+      whenToDo: '2030-01-03',
       done: false
     },
     {
       id: 4,
       description: 'Tarefa 4',
-      whenToDo: '04/01/2030',
+      whenToDo: '2030-01-04',
       done: true
     }
   ])
+
+  const [editId, setEditId] = useState<number>(0)
 
   const removeTask = (id: number): void => {
     if (window.confirm('Deseja mesmo remover essa tarefa?')) {
@@ -90,6 +78,13 @@ const TableListProvider: React.FC = ({ children }) => {
     setTasks(tasks.map(t => (task.id !== t.id ? t : task)))
   }
 
+  const editTask = (id: number): void => {
+    setEditId(id)
+  }
+
+  const loadTask = (id: number): ITableBodyProps['tasks'][0] => {
+    return tasks.filter(t => t.id === id)[0]
+  }
   const saveTask = (task: {
     id: number
     description: string
@@ -102,13 +97,22 @@ const TableListProvider: React.FC = ({ children }) => {
       const taskId = Math.max(...tasks.map(task => task.id)) + 1
       task.id = taskId
       tasks.push(task)
+      setTasks(tasks)
     }
-    setTasks(tasks)
+
     console.log(tasks)
   }
   return (
     <ListTableContext.Provider
-      value={{ tasks, removeTask, updateTaskStatus, saveTask }}
+      value={{
+        tasks,
+        editId,
+        removeTask,
+        updateTaskStatus,
+        saveTask,
+        editTask,
+        loadTask
+      }}
     >
       {children}
     </ListTableContext.Provider>

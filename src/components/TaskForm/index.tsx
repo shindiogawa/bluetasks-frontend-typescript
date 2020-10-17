@@ -1,13 +1,19 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Redirect } from 'react-router-dom'
 import { useList } from '../../hooks/list'
 import { useTableBody } from '../../hooks/useTableBody'
 import TaskListTable from '../TaskListTable'
 
 import { Container } from './styles'
-
-const TaskForm: React.FC = () => {
-  const { saveTask } = useList()
+interface ITaskFormParams {
+  match: {
+    params: {
+      id: string
+    }
+  }
+}
+const TaskForm: React.FC<ITaskFormParams> = ({ match }) => {
+  const { saveTask, loadTask, editTask } = useList()
   const [formTask, setFormTask] = useState({
     id: 0,
     description: '',
@@ -15,6 +21,16 @@ const TaskForm: React.FC = () => {
     done: false
   })
   const [redirect, setRedirect] = useState(false)
+
+  const { id } = match.params
+
+  useEffect(() => {
+    if (id) {
+      setFormTask(loadTask(~~id))
+      editTask(0)
+    }
+  }, [editTask, id, loadTask])
+
   const onSubmitHandler = (event: React.FormEvent<HTMLFormElement>): void => {
     event.preventDefault()
 
@@ -45,6 +61,7 @@ const TaskForm: React.FC = () => {
             className="form-control"
             name="description"
             placeholder="Digite a descrição"
+            value={formTask.description}
             onChange={event => onInputChangeHandler(event)}
           />
         </div>
@@ -54,6 +71,7 @@ const TaskForm: React.FC = () => {
             type="date"
             className="form-control"
             name="whenToDo"
+            value={formTask.whenToDo}
             placeholder="Informe a data"
             onChange={event => onInputChangeHandler(event)}
           />

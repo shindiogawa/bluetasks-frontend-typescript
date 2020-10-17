@@ -8,8 +8,19 @@ import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import EmptyTableBody from './EmptyTableBody'
 import { useList } from '../../hooks/list'
+import { Redirect } from 'react-router-dom'
 const TaskListTable: React.FC<ITableBodyProps> = () => {
-  const { tasks, removeTask, updateTaskStatus, saveTask } = useList()
+  const {
+    tasks,
+    editId,
+    removeTask,
+    updateTaskStatus,
+    saveTask,
+    editTask
+  } = useList()
+  if (editId > 0) {
+    return <Redirect to={`/form/${editId}`} />
+  }
   return (
     <Container>
       <table className="table table-striped">
@@ -20,6 +31,7 @@ const TaskListTable: React.FC<ITableBodyProps> = () => {
             remove={removeTask}
             updateStatus={updateTaskStatus}
             saveTask={saveTask}
+            editTask={editTask}
           />
         ) : (
           <EmptyTableBody />
