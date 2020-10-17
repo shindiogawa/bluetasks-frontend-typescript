@@ -16,7 +16,8 @@ const App: React.FC = () => {
           <TableListProvider>
             <Switch>
               <Route path="/" exact component={TaskListTable} />
-              <Route path="/form" component={TaskForm} />
+              <Route path="/form" exact component={TaskForm} />
+              <Route path="/form/:id" exact component={TaskForm} />
             </Switch>
           </TableListProvider>
         </div>

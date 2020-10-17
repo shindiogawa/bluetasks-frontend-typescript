@@ -22,12 +22,14 @@ export interface ITableBodyProps {
     whenToDo: string
     done: boolean
   }): void
+  editTask(id: number): void
 }
 
 const TableBody: React.FC<ITableBodyProps> = ({
   tasks,
   remove,
-  updateStatus
+  updateStatus,
+  editTask
 }) => {
   console.log(tasks)
   return (
@@ -45,7 +47,12 @@ const TableBody: React.FC<ITableBodyProps> = ({
           <td>{item.done ? <s>{item.description}</s> : item.description}</td>
           <td>{item.done ? <s>{item.whenToDo}</s> : item.whenToDo}</td>
           <td>
-            <input type="button" className="btn btn-primary" value="Editar" />
+            <input
+              type="button"
+              className="btn btn-primary"
+              value="Editar"
+              onClick={() => editTask(item.id)}
+            />
             &nbsp;
             <input
               type="button"
