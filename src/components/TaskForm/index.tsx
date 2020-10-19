@@ -21,13 +21,14 @@ const TaskForm: React.FC<ITaskFormParams> = ({ match }) => {
     done: false
   })
   const [redirect, setRedirect] = useState(false)
-
+  const [buttonName, setButtonName] = useState('Cadastrar')
   const { id } = match.params
 
   useEffect(() => {
     if (id) {
       setFormTask(loadTask(~~id))
       editTask(0)
+      setButtonName('Alterar')
     }
   }, [editTask, id, loadTask])
 
@@ -77,10 +78,14 @@ const TaskForm: React.FC<ITaskFormParams> = ({ match }) => {
           />
         </div>
         <button type="submit" className="btn btn-primary">
-          Cadastrar
+          {buttonName}
         </button>
         &nbsp;&nbsp;
-        <button type="button" className="btn btn-danger">
+        <button
+          type="button"
+          className="btn btn-danger"
+          onClick={() => setRedirect(true)}
+        >
           Cancelar
         </button>
       </form>
