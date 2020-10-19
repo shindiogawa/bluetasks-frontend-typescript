@@ -81,7 +81,11 @@ const TaskForm: React.FC<ITaskFormParams> = ({ match }) => {
           {buttonName}
         </button>
         &nbsp;&nbsp;
-        <button type="button" className="btn btn-danger">
+        <button
+          type="button"
+          className="btn btn-danger"
+          onClick={() => setRedirect(true)}
+        >
           Cancelar
         </button>
       </form>
