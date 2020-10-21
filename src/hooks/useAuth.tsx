@@ -5,7 +5,7 @@ import { AUTH_ENDPOINT, CREDENTIALS_NAME } from '../constants/constants'
 interface IAuthContext {
   login(username: string, password: string): void
   logout(): void
-  isAuthenticated(): void
+  isAuthenticated(): boolean
   credentials: {
     username: string
     displayName: string
@@ -24,7 +24,7 @@ const AuthProvider: React.FC = ({ children }) => {
     token: ''
   })
 
-  const [error, setError] = useState('')
+  const [error, setError] = useState<string>('')
   const [processing, setProcessing] = useState(false)
 
   useEffect(() => {

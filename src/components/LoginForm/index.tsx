@@ -1,45 +1,42 @@
 import React, { useState } from 'react'
+import { Redirect } from 'react-router-dom'
+import { useAuth } from '../../hooks/useAuth'
 
 import Alert from '../Alert'
 
 import { Container } from './styles'
 
 const LoginForm: React.FC = () => {
+  const auth = useAuth()
   // const [username, setUsername] = useState('')
   // const [password, setPassword] = useState('')
   const [loginForm, setLoginForm] = useState({
     username: '',
     password: ''
   })
-  const [alertMessage, setAlertMessage] = useState('')
-  const [processingState, setProcessingState] = useState(false)
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>): void => {
     event.preventDefault()
-    setAlertMessage('tentativa de login')
+    auth.login(loginForm.username, loginForm.password)
   }
 
-  const handleInputChanged = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ): void => {
-    const field = event.target.name
-    const value = event.target.value
-
-    setLoginForm({ ...loginForm, [field]: value })
+  if (auth.isAuthenticated()) {
+    return <Redirect to="/" />
   }
 
   return (
     <Container>
       <h1>Login</h1>
-      {alertMessage !== '' ? <Alert message={alertMessage} /> : ''}
+      {auth.error !== '' ? <Alert message={auth.error} /> : ''}
       <form onSubmit={event => handleSubmit(event)}>
         <div className="form-group">
           <label htmlFor="username">Usuário</label>
           <input
             type="text"
-            name="username"
             className="form-control"
-            onChange={event => handleInputChanged(event)}
+            onChange={event =>
+              setLoginForm({ ...loginForm, username: event.target.value })
+            }
             value={loginForm.username}
             placeholder="Digite o usuário"
           />
@@ -48,9 +45,10 @@ const LoginForm: React.FC = () => {
           <label htmlFor="password">Senha</label>
           <input
             type="password"
-            name="password"
             className="form-control"
-            onChange={event => handleInputChanged(event)}
+            onChange={event =>
+              setLoginForm({ ...loginForm, password: event.target.value })
+            }
             value={loginForm.password}
             placeholder="Digite a senha"
           />
@@ -58,7 +56,7 @@ const LoginForm: React.FC = () => {
         <button
           type="submit"
           className="btn btn-primary"
-          disabled={processingState}
+          disabled={auth.processing}
         >
           Login
         </button>
