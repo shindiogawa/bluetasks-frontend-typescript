@@ -1,5 +1,6 @@
 import React from 'react'
 import { APP_NAME } from '../../constants/constants'
+import { useAuth } from '../../hooks/useAuth'
 import { useNavBarItems } from '../../hooks/useNavBarItems'
 import NavBarItem from './NavBarItem'
 
@@ -7,7 +8,6 @@ import { Container } from './styles'
 
 const NavBar: React.FC = () => {
   const navBarItems = useNavBarItems()
-
   return (
     <Container>
       <nav className="navbar navbar-expand-lg navbar-light bg-light">
@@ -30,6 +30,7 @@ const NavBar: React.FC = () => {
               <NavBarItem key={item.name} item={item} />
             ))}
           </div>
+          <span className="navbar-text">{navBarItems.helloMessage}</span>
         </div>
       </nav>
     </Container>
