@@ -31,7 +31,6 @@ const TableBody: React.FC<ITableBodyProps> = ({
   // updateStatus,
   // editTask
 }) => {
-  console.log(tasks)
   return (
     <Container>
       {tasks.map(item => (

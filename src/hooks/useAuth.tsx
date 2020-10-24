@@ -56,12 +56,13 @@ const AuthProvider: React.FC = ({ children }) => {
   }
 
   const storeCredentials = (token: string) => {
-    const jwtTokenData: any = atob(token.split('.')[1])
+    const tokenData = JSON.parse(atob(token.split('.')[1]))
     const credentials = {
-      username: jwtTokenData.sub,
-      displayName: jwtTokenData.displayName,
+      username: tokenData.sub,
+      displayName: tokenData.displayName,
       token: token
     }
+    console.log(credentials)
     sessionStorage.setItem(CREDENTIALS_NAME, JSON.stringify(credentials))
     setCredentials(credentials)
   }

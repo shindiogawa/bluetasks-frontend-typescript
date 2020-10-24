@@ -1,12 +1,27 @@
 import axios from 'axios'
-import React, { useState } from 'react'
+import React, { createContext, useContext, useState } from 'react'
 import { ITableBodyProps } from '../components/TaskListTable/TableBody'
 import { API_ENDPOINT } from '../constants/constants'
 import { useAuth } from './useAuth'
 
-export const useTasks = () => {
+interface ITasksContext {
+  taskList: ITableBodyProps['tasks']
+  error: string
+  processing: boolean
+  taskRemoved: string
+  taskUpdated: string
+  taskLoaded: string
+  list(): void
+  clearTaskRemoved(): void
+  clearTaskUpdated(): void
+  clearTaskLoaded(): void
+}
+
+const TaskContext = createContext<ITasksContext>({} as ITasksContext)
+
+const TasksProvider: React.FC = ({ children }) => {
   const auth = useAuth()
-  const [taskList, setTaskList] = useState([])
+  const [taskList, setTaskList] = useState<ITableBodyProps['tasks']>([])
   const [error, setError] = useState('')
   const [processing, setProcessing] = useState(false)
   const [taskRemoved, setTaskRemoved] = useState('')
@@ -32,7 +47,6 @@ export const useTasks = () => {
       } else {
         setTaskList(content)
       }
-      console.log(taskList)
       setProcessing(false)
     } catch (error) {
       setError(error)
@@ -59,16 +73,30 @@ export const useTasks = () => {
     }
   }
 
-  return {
-    taskList,
-    error,
-    processing,
-    taskRemoved,
-    taskUpdated,
-    taskLoaded,
-    list,
-    clearTaskRemoved,
-    clearTaskUpdated,
-    clearTaskLoaded
-  }
+  return (
+    <TaskContext.Provider
+      value={{
+        taskList,
+        error,
+        processing,
+        taskRemoved,
+        taskUpdated,
+        taskLoaded,
+        list,
+        clearTaskRemoved,
+        clearTaskUpdated,
+        clearTaskLoaded
+      }}
+    >
+      {children}
+    </TaskContext.Provider>
+  )
 }
+
+function useTasks(): ITasksContext {
+  const context = useContext(TaskContext)
+
+  return context
+}
+
+export { TasksProvider, useTasks }
