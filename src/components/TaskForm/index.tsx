@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import { Redirect } from 'react-router-dom'
 import { useList } from '../../hooks/list'
+import { useAuth } from '../../hooks/useAuth'
 import { useTableBody } from '../../hooks/useTableBody'
+import { useTasks } from '../../hooks/useTasks'
+import Alert from '../Alert'
 import TaskListTable from '../TaskListTable'
 
 import { Container } from './styles'
@@ -13,6 +16,8 @@ interface ITaskFormParams {
   }
 }
 const TaskForm: React.FC<ITaskFormParams> = ({ match }) => {
+  const auth = useAuth()
+  const tasks = useTasks()
   const { saveTask, loadTask, editTask } = useList()
   const [formTask, setFormTask] = useState({
     id: 0,
@@ -21,22 +26,18 @@ const TaskForm: React.FC<ITaskFormParams> = ({ match }) => {
     done: false
   })
   const [redirect, setRedirect] = useState(false)
-  const [buttonName, setButtonName] = useState('Cadastrar')
   const { id } = match.params
 
   useEffect(() => {
     if (id) {
       setFormTask(loadTask(~~id))
       editTask(0)
-      setButtonName('Alterar')
     }
   }, [editTask, id, loadTask])
 
   const onSubmitHandler = (event: React.FormEvent<HTMLFormElement>): void => {
     event.preventDefault()
-
-    saveTask(formTask)
-    setRedirect(true)
+    tasks.save(formTask, false)
   }
 
   const onInputChangeHandler = (
@@ -46,14 +47,21 @@ const TaskForm: React.FC<ITaskFormParams> = ({ match }) => {
     const value = event.target.value
 
     setFormTask({ ...formTask, [field]: value })
-    console.log(formTask)
   }
-  if (redirect) {
+
+  if (!auth.isAuthenticated()) {
+    return <Redirect to="/login" />
+  }
+
+  if (redirect || tasks.taskUpdated) {
+    tasks.clearTaskUpdated()
     return <Redirect to="/" />
   }
+
   return (
     <Container>
       <h1>Cadastro da Tarefa</h1>
+      {tasks.error !== undefined ? <Alert message={tasks.error} /> : ''}
       <form onSubmit={event => onSubmitHandler(event)}>
         <div className="form-group">
           <label htmlFor="description">Descrição</label>
@@ -77,13 +85,29 @@ const TaskForm: React.FC<ITaskFormParams> = ({ match }) => {
             onChange={event => onInputChangeHandler(event)}
           />
         </div>
-        <button type="submit" className="btn btn-primary">
-          {buttonName}
+        <button
+          type="submit"
+          className="btn btn-primary"
+          disabled={tasks.processing}
+        >
+          {console.log('processing = ' + tasks.processing)}
+          {tasks.processing ? (
+            <span
+              className="spinner-border spinner-border-sm"
+              role="status"
+              aria-hidden="true"
+            ></span>
+          ) : formTask.id === 0 ? (
+            'Gravar'
+          ) : (
+            'Alterar'
+          )}
         </button>
         &nbsp;&nbsp;
         <button
           type="button"
           className="btn btn-danger"
+          disabled={tasks.processing}
           onClick={() => setRedirect(true)}
         >
           Cancelar
