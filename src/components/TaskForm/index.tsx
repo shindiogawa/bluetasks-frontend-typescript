@@ -29,11 +29,17 @@ const TaskForm: React.FC<ITaskFormParams> = ({ match }) => {
   const { id } = match.params
 
   useEffect(() => {
-    if (id) {
-      setFormTask(loadTask(~~id))
-      editTask(0)
+    if (id && auth.credentials.username !== '') {
+      tasks.load(~~id)
     }
-  }, [editTask, id, loadTask])
+  }, [auth.credentials])
+
+  useEffect(() => {
+    if (tasks.taskLoaded) {
+      setFormTask(tasks.taskLoaded)
+      tasks.clearTaskLoaded()
+    }
+  }, [tasks.taskLoaded])
 
   const onSubmitHandler = (event: React.FormEvent<HTMLFormElement>): void => {
     event.preventDefault()
@@ -90,7 +96,6 @@ const TaskForm: React.FC<ITaskFormParams> = ({ match }) => {
           className="btn btn-primary"
           disabled={tasks.processing}
         >
-          {console.log('processing = ' + tasks.processing)}
           {tasks.processing ? (
             <span
               className="spinner-border spinner-border-sm"
