@@ -1,6 +1,6 @@
-import React, { useCallback, useEffect, useMemo } from 'react'
+import React, { useEffect, useState } from 'react'
+import { Redirect } from 'react-router-dom'
 import { toast } from 'react-toastify'
-import TaskService from '../../../api/TaskService'
 import { useTasks } from '../../../hooks/useTasks'
 
 import { Container } from './styles'
@@ -12,30 +12,11 @@ export interface ITableBodyProps {
     whenToDo: string
     done: boolean
   }[]
-  // remove(id: number): void
-  // updateStatus(task: {
-  //   id: number
-  //   description: string
-  //   whenToDo: string
-  //   done: boolean
-  // }): void
-  // saveTask(task: {
-  //   id: number
-  //   description: string
-  //   whenToDo: string
-  //   done: boolean
-  // }): void
-  // editTask(id: number): void
 }
 
-const TableBody: React.FC<ITableBodyProps> = ({
-  tasks
-  // remove,
-  // updateStatus,
-  // editTask
-}) => {
+const TableBody: React.FC<ITableBodyProps> = ({ tasks }) => {
   const tasksService = useTasks()
-
+  const [editId, setEditId] = useState(0)
   const onDeleteHandler = (taskToDelete: {
     id: number
     description: string
@@ -45,6 +26,9 @@ const TableBody: React.FC<ITableBodyProps> = ({
     if (window.confirm('Deseja mesmo excluir esta tarefa?')) {
       tasksService.remove(taskToDelete)
     }
+  }
+  const onEditHandler = (taskId: number): void => {
+    setEditId(taskId)
   }
 
   const onStatusChangeHandler = (taskToUpdate: {
@@ -77,6 +61,10 @@ const TableBody: React.FC<ITableBodyProps> = ({
     }
   }, [tasksService.taskRemoved, tasksService.taskUpdated, tasksService])
 
+  if (editId > 0) {
+    return <Redirect to={`/form/${editId}`} />
+  }
+
   return (
     <Container>
       {tasks.map(item => (
@@ -96,7 +84,7 @@ const TableBody: React.FC<ITableBodyProps> = ({
               type="button"
               className="btn btn-primary"
               value="Editar"
-              onClick={() => false}
+              onClick={() => onEditHandler(item.id)}
             />
             &nbsp;
             <input

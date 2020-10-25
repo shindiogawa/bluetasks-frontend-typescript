@@ -1,9 +1,8 @@
 import React from 'react'
 import { APP_NAME } from '../../constants/constants'
-import { useAuth } from '../../hooks/useAuth'
 import { useNavBarItems } from '../../hooks/useNavBarItems'
 import NavBarItem from './NavBarItem'
-
+import { v4 } from 'uuid'
 import { Container } from './styles'
 
 const NavBar: React.FC = () => {
@@ -27,7 +26,7 @@ const NavBar: React.FC = () => {
         <div className="collapse navbar-collapse" id="navbarText">
           <div className="navbar-nav mr-auto">
             {navBarItems.items.map(item => (
-              <NavBarItem key={item.name} item={item} />
+              <NavBarItem key={v4()} item={item} />
             ))}
           </div>
           <span className="navbar-text">{navBarItems.helloMessage}</span>

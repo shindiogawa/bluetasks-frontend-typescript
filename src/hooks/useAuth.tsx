@@ -63,7 +63,6 @@ const AuthProvider: React.FC = ({ children }) => {
       displayName: tokenData.displayName,
       token: token
     }
-    console.log(credentials)
     sessionStorage.setItem(CREDENTIALS_NAME, JSON.stringify(credentials))
     setCredentials(credentials)
   }
