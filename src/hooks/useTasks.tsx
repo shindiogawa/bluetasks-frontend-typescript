@@ -23,6 +23,7 @@ interface ITasksContext {
     },
     onlyStatus: boolean
   ): void
+  load(id: number): void
   taskRemoved:
     | {
         id: number
@@ -39,7 +40,14 @@ interface ITasksContext {
         done: boolean
       }
     | undefined
-  taskLoaded: string
+  taskLoaded:
+    | {
+        id: number
+        description: string
+        whenToDo: string
+        done: boolean
+      }
+    | undefined
   list(): void
   clearTaskRemoved(): void
   clearTaskUpdated(): void
@@ -65,7 +73,12 @@ const TasksProvider: React.FC = ({ children }) => {
     whenToDo: string
     done: boolean
   }>()
-  const [taskLoaded, setTaskLoaded] = useState('')
+  const [taskLoaded, setTaskLoaded] = useState<{
+    id: number
+    description: string
+    whenToDo: string
+    done: boolean
+  }>()
 
   const list = async () => {
     try {
@@ -123,7 +136,7 @@ const TasksProvider: React.FC = ({ children }) => {
       setProcessing(!onlyStatus)
       setTaskUpdated(undefined)
       setError(undefined)
-
+      console.log(taskToSave)
       if (taskToSave.id === 0) {
         await axios.post(`${API_ENDPOINT}/tasks`, taskToSave, buildAuthHeader())
       } else {
@@ -141,21 +154,21 @@ const TasksProvider: React.FC = ({ children }) => {
     }
   }
 
-  // const load = async id => {
-  //   try {
-  //     setProcessing(true)
-  //     setError({} as AxiosError)
-  //     setTaskLoaded(null)
-  //     const response = await axios.get(
-  //       `${API_ENDPOINT}/tasks/${id}`,
-  //       buildAuthHeader()
-  //     )
-  //     setTaskLoaded(response.data)
-  //     setProcessing(false)
-  //   } catch (error) {
-  //     handleError(error)
-  //   }
-  // }
+  const load = async (id: number) => {
+    try {
+      setProcessing(true)
+      setError(undefined)
+      setTaskLoaded(undefined)
+      const response = await axios.get(
+        `${API_ENDPOINT}/tasks/${id}`,
+        buildAuthHeader()
+      )
+      setTaskLoaded(response.data)
+      setProcessing(false)
+    } catch (error) {
+      handleError(error)
+    }
+  }
 
   const clearTaskRemoved = () => {
     setTaskRemoved(undefined)
@@ -166,7 +179,7 @@ const TasksProvider: React.FC = ({ children }) => {
   }
 
   const clearTaskLoaded = () => {
-    setTaskLoaded('')
+    setTaskLoaded(undefined)
   }
 
   const handleError = (error: AxiosError) => {
@@ -198,6 +211,7 @@ const TasksProvider: React.FC = ({ children }) => {
         processing,
         remove,
         save,
+        load,
         taskRemoved,
         taskUpdated,
         taskLoaded,

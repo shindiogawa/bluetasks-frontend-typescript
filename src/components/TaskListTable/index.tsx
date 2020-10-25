@@ -29,6 +29,7 @@ const TaskListTable: React.FC<ITableBodyProps> = () => {
 
   return (
     <Container>
+      {`${tasks.taskUpdated}`}
       {tasks.error === undefined ? '' : <Alert message={tasks.error} />}
       {tasks.processing ? (
         <Spinner />
