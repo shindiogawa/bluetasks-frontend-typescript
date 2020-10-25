@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect } from 'react'
 
 import { Container } from './styles'
@@ -7,7 +8,6 @@ import TableHeader from './TableHeader'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import EmptyTableBody from './EmptyTableBody'
-import { useList } from '../../hooks/list'
 import { Redirect } from 'react-router-dom'
 import { useTasks } from '../../hooks/useTasks'
 import { useAuth } from '../../hooks/useAuth'
@@ -29,7 +29,6 @@ const TaskListTable: React.FC<ITableBodyProps> = () => {
 
   return (
     <Container>
-      {`${tasks.taskUpdated}`}
       {tasks.error === undefined ? '' : <Alert message={tasks.error} />}
       {tasks.processing ? (
         <Spinner />

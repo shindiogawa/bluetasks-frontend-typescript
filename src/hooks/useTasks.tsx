@@ -136,7 +136,6 @@ const TasksProvider: React.FC = ({ children }) => {
       setProcessing(!onlyStatus)
       setTaskUpdated(undefined)
       setError(undefined)
-      console.log(taskToSave)
       if (taskToSave.id === 0) {
         await axios.post(`${API_ENDPOINT}/tasks`, taskToSave, buildAuthHeader())
       } else {
@@ -183,7 +182,6 @@ const TasksProvider: React.FC = ({ children }) => {
   }
 
   const handleError = (error: AxiosError) => {
-    console.log(error)
     const resp = error.response
 
     if (resp && resp.status === 400 && resp.data) {

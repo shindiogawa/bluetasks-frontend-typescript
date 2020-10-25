@@ -1,11 +1,11 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react'
 import { Redirect } from 'react-router-dom'
-import { useList } from '../../hooks/list'
+
 import { useAuth } from '../../hooks/useAuth'
-import { useTableBody } from '../../hooks/useTableBody'
+
 import { useTasks } from '../../hooks/useTasks'
 import Alert from '../Alert'
-import TaskListTable from '../TaskListTable'
 
 import { Container } from './styles'
 interface ITaskFormParams {
@@ -18,7 +18,6 @@ interface ITaskFormParams {
 const TaskForm: React.FC<ITaskFormParams> = ({ match }) => {
   const auth = useAuth()
   const tasks = useTasks()
-  const { saveTask, loadTask, editTask } = useList()
   const [formTask, setFormTask] = useState({
     id: 0,
     description: '',

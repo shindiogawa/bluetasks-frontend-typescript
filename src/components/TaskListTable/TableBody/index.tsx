@@ -1,7 +1,6 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Redirect } from 'react-router-dom'
 import { toast } from 'react-toastify'
-import TaskService from '../../../api/TaskService'
 import { useTasks } from '../../../hooks/useTasks'
 
 import { Container } from './styles'

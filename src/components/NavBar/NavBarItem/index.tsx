@@ -1,6 +1,5 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-
 import { Container } from './styles'
 
 export interface INavBarItemProps {
@@ -17,7 +16,7 @@ const NavBarItem: React.FC<INavBarItemProps> = ({ item }) => {
     <Container>
       <Link
         className={`nav-item nav-link ${item.active ? 'active' : ''}`}
-        to={item.href}
+        to={item.href === undefined ? '#' : item.href}
         onClick={() => item.onClick({ item })}
       >
         {item.name}
