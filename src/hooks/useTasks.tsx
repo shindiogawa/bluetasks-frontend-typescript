@@ -1,4 +1,4 @@
-import axios from 'axios'
+import axios, { AxiosError } from 'axios'
 import React, { createContext, useContext, useState } from 'react'
 import { ITableBodyProps } from '../components/TaskListTable/TableBody'
 import { API_ENDPOINT } from '../constants/constants'
@@ -8,7 +8,20 @@ interface ITasksContext {
   taskList: ITableBodyProps['tasks']
   error: string
   processing: boolean
-  taskRemoved: string
+  remove(taskToRemove: {
+    id: number
+    description: string
+    whenToDo: string
+    done: boolean
+  }): void
+  taskRemoved:
+    | {
+        id: number
+        description: string
+        whenToDo: string
+        done: boolean
+      }
+    | undefined
   taskUpdated: string
   taskLoaded: string
   list(): void
@@ -22,9 +35,14 @@ const TaskContext = createContext<ITasksContext>({} as ITasksContext)
 const TasksProvider: React.FC = ({ children }) => {
   const auth = useAuth()
   const [taskList, setTaskList] = useState<ITableBodyProps['tasks']>([])
-  const [error, setError] = useState('')
+  const [error, setError] = useState<any>(undefined)
   const [processing, setProcessing] = useState(false)
-  const [taskRemoved, setTaskRemoved] = useState('')
+  const [taskRemoved, setTaskRemoved] = useState<{
+    id: number
+    description: string
+    whenToDo: string
+    done: boolean
+  }>()
   const [taskUpdated, setTaskUpdated] = useState('')
   const [taskLoaded, setTaskLoaded] = useState('')
 
@@ -49,12 +67,69 @@ const TasksProvider: React.FC = ({ children }) => {
       }
       setProcessing(false)
     } catch (error) {
-      setError(error)
+      handleError(error)
     }
   }
 
+  const remove = async (taskToRemove: {
+    id: number
+    description: string
+    whenToDo: string
+    done: boolean
+  }) => {
+    try {
+      await axios.delete(
+        `${API_ENDPOINT}/tasks/${taskToRemove.id}`,
+        buildAuthHeader()
+      )
+      setTaskList(taskList.filter(task => taskToRemove.id !== task.id))
+      setTaskRemoved(taskToRemove)
+    } catch (error) {
+      handleError(error)
+    }
+  }
+
+  // const save = async (taskToSave, onlyStatus = false) => {
+  //   try {
+  //     setProcessing(!onlyStatus)
+  //     setTaskUpdated(null)
+  //     setError(null)
+
+  //     if (taskToSave.id === 0) {
+  //       await axios.post(`${API_ENDPOINT}/tasks`, taskToSave, buildAuthHeader())
+  //     } else {
+  //       await axios.put(
+  //         `${API_ENDPOINT}/tasks/${taskToSave.id}`,
+  //         taskToSave,
+  //         buildAuthHeader()
+  //       )
+  //     }
+
+  //     setProcessing(false)
+  //     setTaskUpdated(taskToSave)
+  //   } catch (error) {
+  //     handleError(error)
+  //   }
+  // }
+
+  // const load = async id => {
+  //   try {
+  //     setProcessing(true)
+  //     setError({} as AxiosError)
+  //     setTaskLoaded(null)
+  //     const response = await axios.get(
+  //       `${API_ENDPOINT}/tasks/${id}`,
+  //       buildAuthHeader()
+  //     )
+  //     setTaskLoaded(response.data)
+  //     setProcessing(false)
+  //   } catch (error) {
+  //     handleError(error)
+  //   }
+  // }
+
   const clearTaskRemoved = () => {
-    setTaskRemoved('')
+    setTaskRemoved(undefined)
   }
 
   const clearTaskUpdated = () => {
@@ -63,6 +138,19 @@ const TasksProvider: React.FC = ({ children }) => {
 
   const clearTaskLoaded = () => {
     setTaskLoaded('')
+  }
+
+  const handleError = (error: AxiosError) => {
+    console.log(error)
+    const resp = error.response
+
+    if (resp && resp.status === 400 && resp.data) {
+      setError(resp.data.error)
+    } else {
+      setError(error.message)
+    }
+
+    setProcessing(false)
   }
 
   const buildAuthHeader = () => {
@@ -79,6 +167,7 @@ const TasksProvider: React.FC = ({ children }) => {
         taskList,
         error,
         processing,
+        remove,
         taskRemoved,
         taskUpdated,
         taskLoaded,
