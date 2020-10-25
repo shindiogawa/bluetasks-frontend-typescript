@@ -1,4 +1,7 @@
 import React, { useCallback, useEffect, useMemo } from 'react'
+import { toast } from 'react-toastify'
+import TaskService from '../../../api/TaskService'
+import { useTasks } from '../../../hooks/useTasks'
 
 import { Container } from './styles'
 
@@ -31,6 +34,28 @@ const TableBody: React.FC<ITableBodyProps> = ({
   // updateStatus,
   // editTask
 }) => {
+  const tasksService = useTasks()
+
+  const onDeleteHandler = (taskToDelete: {
+    id: number
+    description: string
+    whenToDo: string
+    done: boolean
+  }): void => {
+    if (window.confirm('Deseja mesmo excluir esta tarefa?')) {
+      tasksService.remove(taskToDelete)
+    }
+  }
+
+  useEffect(() => {
+    if (tasksService.taskRemoved !== undefined) {
+      toast.success(`Tarefa ${tasksService.taskRemoved.id} excluída!`, {
+        position: toast.POSITION.BOTTOM_LEFT
+      })
+      tasksService.clearTaskRemoved()
+    }
+  }, [tasksService.taskRemoved])
+
   return (
     <Container>
       {tasks.map(item => (
@@ -53,7 +78,7 @@ const TableBody: React.FC<ITableBodyProps> = ({
               type="button"
               className="btn btn-danger"
               value="Excluir"
-              onClick={() => false}
+              onClick={() => onDeleteHandler(item)}
             />
           </td>
         </tr>
