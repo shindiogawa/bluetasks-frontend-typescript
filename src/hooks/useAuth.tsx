@@ -53,6 +53,7 @@ const AuthProvider: React.FC = ({ children }) => {
       displayName: '',
       token: ''
     })
+    setError('')
   }
 
   const storeCredentials = (token: string) => {
