@@ -47,21 +47,46 @@ const TableBody: React.FC<ITableBodyProps> = ({
     }
   }
 
+  const onStatusChangeHandler = (taskToUpdate: {
+    id: number
+    description: string
+    whenToDo: string
+    done: boolean
+  }): void => {
+    taskToUpdate.done = !taskToUpdate.done
+    tasksService.save(taskToUpdate, true)
+  }
+
   useEffect(() => {
     if (tasksService.taskRemoved !== undefined) {
       toast.success(`Tarefa ${tasksService.taskRemoved.id} excluída!`, {
         position: toast.POSITION.BOTTOM_LEFT
       })
+      tasksService.clearTaskUpdated()
+    }
+    if (tasksService.taskUpdated !== undefined) {
+      toast.success(
+        `Tarefa ${tasksService.taskUpdated.id} foi marcada como ${
+          !tasksService.taskUpdated.done ? 'não' : ''
+        } concluída !`,
+        {
+          position: toast.POSITION.BOTTOM_LEFT
+        }
+      )
       tasksService.clearTaskRemoved()
     }
-  }, [tasksService.taskRemoved])
+  }, [tasksService.taskRemoved, tasksService.taskUpdated, tasksService])
 
   return (
     <Container>
       {tasks.map(item => (
         <tr key={item.id}>
           <td>
-            <input type="checkbox" checked={item.done} onChange={() => false} />
+            <input
+              type="checkbox"
+              checked={item.done}
+              onChange={() => onStatusChangeHandler(item)}
+            />
           </td>
 
           <td>{item.done ? <s>{item.description}</s> : item.description}</td>

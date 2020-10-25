@@ -6,7 +6,7 @@ import { useAuth } from './useAuth'
 
 interface ITasksContext {
   taskList: ITableBodyProps['tasks']
-  error: string
+  error: string | undefined
   processing: boolean
   remove(taskToRemove: {
     id: number
@@ -14,6 +14,15 @@ interface ITasksContext {
     whenToDo: string
     done: boolean
   }): void
+  save(
+    taskToSave: {
+      id: number
+      description: string
+      whenToDo: string
+      done: boolean
+    },
+    onlyStatus: boolean
+  ): void
   taskRemoved:
     | {
         id: number
@@ -22,7 +31,14 @@ interface ITasksContext {
         done: boolean
       }
     | undefined
-  taskUpdated: string
+  taskUpdated:
+    | {
+        id: number
+        description: string
+        whenToDo: string
+        done: boolean
+      }
+    | undefined
   taskLoaded: string
   list(): void
   clearTaskRemoved(): void
@@ -35,7 +51,7 @@ const TaskContext = createContext<ITasksContext>({} as ITasksContext)
 const TasksProvider: React.FC = ({ children }) => {
   const auth = useAuth()
   const [taskList, setTaskList] = useState<ITableBodyProps['tasks']>([])
-  const [error, setError] = useState<any>(undefined)
+  const [error, setError] = useState<string | undefined>()
   const [processing, setProcessing] = useState(false)
   const [taskRemoved, setTaskRemoved] = useState<{
     id: number
@@ -43,13 +59,18 @@ const TasksProvider: React.FC = ({ children }) => {
     whenToDo: string
     done: boolean
   }>()
-  const [taskUpdated, setTaskUpdated] = useState('')
+  const [taskUpdated, setTaskUpdated] = useState<{
+    id: number
+    description: string
+    whenToDo: string
+    done: boolean
+  }>()
   const [taskLoaded, setTaskLoaded] = useState('')
 
   const list = async () => {
     try {
       setProcessing(true)
-      setError('')
+      setError(undefined)
       const response = await axios.get(
         `${API_ENDPOINT}/tasks?sort=whenToDo,asc`,
         buildAuthHeader()
@@ -89,28 +110,36 @@ const TasksProvider: React.FC = ({ children }) => {
     }
   }
 
-  // const save = async (taskToSave, onlyStatus = false) => {
-  //   try {
-  //     setProcessing(!onlyStatus)
-  //     setTaskUpdated(null)
-  //     setError(null)
+  const save = async (
+    taskToSave: {
+      id: number
+      description: string
+      whenToDo: string
+      done: boolean
+    },
+    onlyStatus = false
+  ) => {
+    try {
+      setProcessing(!onlyStatus)
+      setTaskUpdated(undefined)
+      setError(undefined)
 
-  //     if (taskToSave.id === 0) {
-  //       await axios.post(`${API_ENDPOINT}/tasks`, taskToSave, buildAuthHeader())
-  //     } else {
-  //       await axios.put(
-  //         `${API_ENDPOINT}/tasks/${taskToSave.id}`,
-  //         taskToSave,
-  //         buildAuthHeader()
-  //       )
-  //     }
+      if (taskToSave.id === 0) {
+        await axios.post(`${API_ENDPOINT}/tasks`, taskToSave, buildAuthHeader())
+      } else {
+        await axios.put(
+          `${API_ENDPOINT}/tasks/${taskToSave.id}`,
+          taskToSave,
+          buildAuthHeader()
+        )
+      }
 
-  //     setProcessing(false)
-  //     setTaskUpdated(taskToSave)
-  //   } catch (error) {
-  //     handleError(error)
-  //   }
-  // }
+      setProcessing(false)
+      setTaskUpdated(taskToSave)
+    } catch (error) {
+      handleError(error)
+    }
+  }
 
   // const load = async id => {
   //   try {
@@ -133,7 +162,7 @@ const TasksProvider: React.FC = ({ children }) => {
   }
 
   const clearTaskUpdated = () => {
-    setTaskUpdated('')
+    setTaskUpdated(undefined)
   }
 
   const clearTaskLoaded = () => {
@@ -168,6 +197,7 @@ const TasksProvider: React.FC = ({ children }) => {
         error,
         processing,
         remove,
+        save,
         taskRemoved,
         taskUpdated,
         taskLoaded,
